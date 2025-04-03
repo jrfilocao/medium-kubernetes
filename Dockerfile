@@ -1,17 +1,17 @@
-# Use the official Go base image
-FROM golang:1.12.0-alpine3.9
+FROM golang:1.12-alpine
 
-# Set the working directory
+# Install gcc and musl-dev for cgo support
+RUN apk add --no-cache gcc musl-dev
+
 WORKDIR /app
 
-# Copy the Go source code into the container
-COPY server.go .
+COPY go.mod ./
+RUN go mod download
 
-# Build the Go binary
+COPY . .
+
 RUN go build -o server .
 
-# Expose the port that the server listens on
 EXPOSE 8080
 
-# Start the server when the container is run
 CMD ["./server"]
